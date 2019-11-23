@@ -7,12 +7,18 @@ class QuoteSearcher extends Component {
     loading: true,
     ups: 0,
     downs: 0,
-    query: ""
-  };
+    query: "",
+    addQuoteText:"",
+    addQuoteAuthor:""
+}
+
+
+
 
   componentDidMount() {
     this.Fetcher("word");
   }
+
 
   Fetcher(query) {
     this.setState({ loading: true });
@@ -77,13 +83,44 @@ class QuoteSearcher extends Component {
     });
   };
 
+quoteChangeHandler = event =>{this.setState({addQuoteText: event.target.value}) }
+authorChangeHandler = event =>{this.setState({addQuoteAuthor: event.target.value})}
+
+
   Search = () => {
     this.Fetcher(this.state.query);
+    this.setState({ups:0, downs:0})
   };
+
+  addQuote = (text, author) => {
+    const quote = {
+      _id: Math.round(Math.random()*100000),
+      quoteAuthor: author,
+      quoteText: text,
+    }
+    this.setState({
+      quotes: this.state.quotes.concat(quote),
+      addQuoteText: "",
+      addQuoteAuthor:""
+    })
+  }
+
+  addQuoteHandler=()=>{
+    this.addQuote(this.state.addQuoteText, this.state.addQuoteAuthor)
+}
+
+
 
   render() {
     const quotes = this.state.quotes;
-    if ((quotes.length===0) && !this.loading ){return 'no quotes found'}
+    if ((quotes.length===0) && !this.loading ){return <div> no quotes found' <input
+    placeholder={"Search Quotes"}
+    onChange={this.SearchChangeHandler}
+    value={this.state.query}
+  />
+  <button type="button" onClick={this.Search}>
+    search
+  </button></div>}
     return (
       <div>
         <h2>
@@ -96,8 +133,19 @@ class QuoteSearcher extends Component {
         />
         <button type="button" onClick={this.Search}>
           search
+        </button><br/>
+        <input
+          placeholder={"add a quote"}
+          onChange={this.quoteChangeHandler}
+          value={this.state.addQuoteText}
+        /><input
+        placeholder={"by: ..."}
+        onChange={this.authorChangeHandler}
+        value={this.state.addQuoteAuthor}
+      />
+        <button type="button" onClick={this.addQuoteHandler}>
+          add quote
         </button>
-
         {!this.state.loading? ( 
           quotes.map(quote => {
             return (
@@ -117,7 +165,8 @@ class QuoteSearcher extends Component {
             "loading..."{" "}
             <img alt="loading" src={require("../images/ravens-quill.gif")} />
           </div>
-        )}
+        )} 
+        
       </div>
     );
   }
