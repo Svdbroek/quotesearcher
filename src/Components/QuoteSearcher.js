@@ -1,38 +1,55 @@
-import React, { Component } from 'react';
-import Quote from './Quote'
+import React, { Component } from "react";
+import Quote from "./Quote";
 
 class QuoteSearcher extends Component {
-    state = {
-        quotes: [
-          {
-            "_id": "5d91b45d9980192a317c8acc",
-            "quoteText": "Notice that the stiffest tree is most easily cracked, while the bamboo or willow survives by bending with the wind.",
-            "quoteAuthor": "Bruce Lee"
-          },
-          {
-            "_id": "5d91b45d9980192a317c8abe",
-            "quoteText": "Give me six hours to chop down a tree and I will spend the first four sharpening the axe.",
-            "quoteAuthor": "Abraham Lincoln"
-          },
-          {
-            "_id": "5d91b45d9980192a317c8955",
-            "quoteText": "Good timber does not grow with ease; the stronger the wind, the stronger the trees.",
-            "quoteAuthor": "J. Willard Marriott"
-          },
-        ]
-      }
+  state = {
+    quotes: [],
+    loading: true,
+    likes: 0,
+    dislikes: 0,
+  };
 
+  componentDidMount() {
+      console.log(this.state.loading);
+    this.Fetcher();
+    console.log(this.state.loading)
 
+  }
 
+  Fetcher() {
+    fetch("https://quote-garden.herokuapp.com/quotes/search/tree") // make the request
+      .then(response => response.json())
+      .then(myJson => {
+        this.setState({ quotes: myJson.results, loading: false });
+        console.log(this.state.loading)
 
-    render() {
-        const quotes = this.state.quotes
-        return (
-            <div>
-                {quotes.map((quote) => {return <Quote id={quote._id} quote={quote.quoteText} author={quote.quoteAuthor} />})}
-            </div>
-        );
-    }
+      });
+  }
+
+  likeCounter(){
+
+  }
+
+  render() {
+    const quotes = this.state.quotes;
+    return (
+      <div>
+          <h2>Likes: Dislikes:</h2>
+        {!this.state.loading
+          ? quotes.map(quote => {
+              return (
+                <Quote
+                  id={quote._id}
+                  quote={quote.quoteText}
+                  author={quote.quoteAuthor}
+                  likeCounter = {this.likeCounter()}
+                />
+              );
+            })
+          : <div>"loading..." <img alt= "loading"src={require('../images/ravens-quill.gif')} /></div> }
+      </div>
+    );
+  }
 }
 
 export default QuoteSearcher;
