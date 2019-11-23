@@ -11,20 +11,17 @@ class QuoteSearcher extends Component {
   };
 
   componentDidMount() {
-    console.log(this.state.loading);
     this.Fetcher("word");
-    console.log(this.state.loading);
-    console.log(this.state.ups);
   }
 
   Fetcher(query) {
-      this.setState({loading:true})
+    this.setState({ loading: true });
     fetch(`https://quote-garden.herokuapp.com/quotes/search/${query}`) // make the request
       .then(response => response.json())
       .then(myJson => {
         this.setState({ quotes: myJson.results, loading: false });
-        console.log(this.state.loading);
-      });
+      })
+      .catch(console.error);
   }
 
   likeCounter = (DisLiked, WasDisLiked) => {
@@ -73,20 +70,20 @@ class QuoteSearcher extends Component {
     this.setState({ ups: likes, downs: dislikes });
   };
 
-  SearchChangeHandler =event=> {//needs to be arrowfunction
+  SearchChangeHandler = event => {
+    //needs to be arrowfunction
     this.setState({
       query: event.target.value
     });
-  }
+  };
 
-
-Search=()=>{
-    this.Fetcher((this.state.query))
-}
-
+  Search = () => {
+    this.Fetcher(this.state.query);
+  };
 
   render() {
     const quotes = this.state.quotes;
+    if ((quotes.length===0) && !this.loading ){return 'no quotes found'}
     return (
       <div>
         <h2>
@@ -96,13 +93,12 @@ Search=()=>{
           placeholder={"Search Quotes"}
           onChange={this.SearchChangeHandler}
           value={this.state.query}
-          
         />
         <button type="button" onClick={this.Search}>
           search
         </button>
 
-        {!this.state.loading ? (
+        {!this.state.loading? ( 
           quotes.map(quote => {
             return (
               <Quote
