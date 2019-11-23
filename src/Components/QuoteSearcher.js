@@ -11,82 +11,117 @@ class QuoteSearcher extends Component {
   };
 
   componentDidMount() {
-      console.log(this.state.loading);
+    console.log(this.state.loading);
     this.Fetcher("word");
-    console.log(this.state.loading)
-    console.log(this.state.ups)
-
+    console.log(this.state.loading);
+    console.log(this.state.ups);
   }
 
   Fetcher(query) {
+      this.setState({loading:true})
     fetch(`https://quote-garden.herokuapp.com/quotes/search/${query}`) // make the request
       .then(response => response.json())
       .then(myJson => {
         this.setState({ quotes: myJson.results, loading: false });
-        console.log(this.state.loading)
-
+        console.log(this.state.loading);
       });
   }
 
-  likeCounter =( DisLiked, WasDisLiked)=>{ // doesnt work if not arrow function
-    let likes = this.state.ups
-    let dislikes = this.state.downs 
-    
-    if (DisLiked === WasDisLiked){likes = 0; dislikes=0}else{ // I didn't do this the same as was suggested in the reader, because I started working on this before reading the rest of the reader
-    switch (WasDisLiked) {
+  likeCounter = (DisLiked, WasDisLiked) => {
+    // doesnt work if not arrow function
+    let likes = this.state.ups;
+    let dislikes = this.state.downs;
+
+    if (DisLiked === WasDisLiked) {
+      likes = 0;
+      dislikes = 0;
+    } else {
+      // I didn't do this the same as was suggested in the reader, because I started working on this before reading the rest of the reader
+      switch (WasDisLiked) {
         case true:
-        if (DisLiked){ likes = likes+1; dislikes=dislikes-1 } 
-        if (!DisLiked){dislikes=dislikes+1; likes=likes-1}
-            break;
+          if (DisLiked) {
+            likes = likes + 1;
+            dislikes = dislikes - 1;
+          }
+          if (!DisLiked) {
+            dislikes = dislikes + 1;
+            likes = likes - 1;
+          }
+          break;
         case false:
-        if (DisLiked){ likes = likes+1; dislikes=dislikes-1 } 
-        if (!DisLiked){dislikes=dislikes+1; likes=likes-1}
-        break;
-        default: 
-        if (DisLiked){ likes = likes+1 } 
-        if (!DisLiked){dislikes=dislikes+1}
+          if (DisLiked) {
+            likes = likes + 1;
+            dislikes = dislikes - 1;
+          }
+          if (!DisLiked) {
+            dislikes = dislikes + 1;
+            likes = likes - 1;
+          }
+          break;
+        default:
+          if (DisLiked) {
+            likes = likes + 1;
+          }
+          if (!DisLiked) {
+            dislikes = dislikes + 1;
+          }
 
-            break;
-    }}
+          break;
+      }
+    }
 
+    this.setState({ ups: likes, downs: dislikes });
+  };
 
-     this.setState({ups:likes, downs:dislikes})
-  }
-
-
-  SearchChangeHandler(event) {
+  SearchChangeHandler =event=> {//needs to be arrowfunction
     this.setState({
       query: event.target.value
     });
-  };
-
-
-  gogogadgetsearch(){
-
   }
+
+
+Search=()=>{
+    this.Fetcher((this.state.query))
+}
+
+
   render() {
     const quotes = this.state.quotes;
     return (
       <div>
-          <h2>Likes: {this.state.ups} Dislikes:{this.state.downs} </h2>
-    <input placeholder={"Search Quotes"} onChange={this.SearchChangeHandler} value={this.state.query}/><button type="button" onClick={this.gogogadgetsearch}>
+        <h2>
+          Likes: {this.state.ups} Dislikes:{this.state.downs}{" "}
+        </h2>
+        <input
+          placeholder={"Search Quotes"}
+          onChange={this.SearchChangeHandler}
+          value={this.state.query}
+          
+        />
+        <button type="button" onClick={this.Search}>
+          search
+        </button>
 
-
-        {!this.state.loading
-          ? quotes.map(quote => {
-              return (
-                <Quote
-                key ={quote._id}
-                  id={quote._id}
-                  quote={quote.quoteText}
-                  author={quote.quoteAuthor}
-                  likeCounter = {this.likeCounter}
-                  ups = {this.state.ups}
-                  downs ={this.state.downs}
-                />
-              );
-            })
-          : <div>"loading..." <img alt= "loading"src={require('../images/ravens-quill.gif')} /></div> }
+        {!this.state.loading ? (
+          quotes.map(quote => {
+            return (
+              <Quote
+                key={quote._id}
+                id={quote._id}
+                quote={quote.quoteText}
+                author={quote.quoteAuthor}
+                likeCounter={this.likeCounter}
+                ups={this.state.ups}
+                downs={this.state.downs}
+              />
+            );
+          })
+        ) : (
+          <div>
+            "loading..."{" "}
+            <img alt="loading" src={require("../images/ravens-quill.gif")} />
+          </div>
+        )}
       </div>
     );
   }
