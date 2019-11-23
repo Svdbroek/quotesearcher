@@ -28,7 +28,7 @@ class QuoteSearcher extends Component {
       });
   }
 
-  likeCounter =( DisLiked, WasDisLiked)=>{
+  likeCounter =( DisLiked, WasDisLiked)=>{ // doesnt work if not arrow function
     let likes = this.state.ups
     let dislikes = this.state.downs 
     
@@ -54,18 +54,23 @@ class QuoteSearcher extends Component {
   }
 
 
-  SearchChangeHandler = event => {
+  SearchChangeHandler(event) {
     this.setState({
       query: event.target.value
     });
   };
 
+
+  gogogadgetsearch(){
+
+  }
   render() {
     const quotes = this.state.quotes;
     return (
       <div>
           <h2>Likes: {this.state.ups} Dislikes:{this.state.downs} </h2>
-    <input placeholder={"Search Quotes"} onChange={this.SearchChangeHandler} value={this.state.query}/>
+    <input placeholder={"Search Quotes"} onChange={this.SearchChangeHandler} value={this.state.query}/><button type="button" onClick={this.gogogadgetsearch}>
+
 
         {!this.state.loading
           ? quotes.map(quote => {
